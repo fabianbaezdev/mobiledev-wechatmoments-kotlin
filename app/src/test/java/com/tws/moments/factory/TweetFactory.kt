@@ -1,0 +1,46 @@
+package com.tws.moments.factory
+
+import com.tws.moments.data.api.entry.CommentsBean
+import com.tws.moments.data.api.entry.ImagesBean
+import com.tws.moments.data.api.entry.SenderBean
+import com.tws.moments.data.api.entry.TweetBean
+
+object TweetFactory {
+
+    fun makeTweetBeanWithData() = TweetBean(
+        content = "content",
+        images = listOf(ImagesBean(url = "url"), ImagesBean(url = "url")),
+        sender = SenderBean(
+            username = "username",
+            nick = "nick",
+            avatar = "avatar"
+        ),
+        comments = listOf(
+            CommentsBean(
+                content = "content", sender = SenderBean(
+                    username = "username",
+                    nick = "nick",
+                    avatar = "avatar"
+                )
+            ), CommentsBean(
+                content = "content", sender = SenderBean(
+                    username = "username",
+                    nick = "nick",
+                    avatar = "avatar"
+                )
+            )
+        )
+    )
+
+    fun makeTweetBeanWithoutComments() = TweetBean(
+        content = "content",
+        images = listOf(ImagesBean(url = "url1"), ImagesBean(url = "url2")),
+        sender = SenderBean(
+            username = "username",
+            nick = "nick",
+            avatar = "avatar"
+        )
+    )
+
+    fun makeTweetBeanWithoutData() = TweetBean()
+}

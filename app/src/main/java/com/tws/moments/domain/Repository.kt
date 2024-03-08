@@ -1,9 +1,9 @@
 package com.tws.moments.domain
 
-import com.tws.moments.data.api.entry.TweetBean
-import com.tws.moments.data.api.entry.UserBean
+import com.tws.moments.domain.model.Tweet
+import com.tws.moments.domain.model.User
 
 interface Repository {
-    suspend fun fetchUser(): UserBean
-    suspend fun fetchTweets(): List<TweetBean>
+    suspend fun fetchUser(): User
+    suspend fun fetchTweets(): List<Tweet>
 }

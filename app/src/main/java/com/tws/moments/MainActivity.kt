@@ -9,15 +9,16 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.tws.moments.ui.adapters.MomentsAdapter
 import com.tws.moments.data.MomentRepository
 import com.tws.moments.databinding.ActivityMainBinding
-import com.tws.moments.utils.ScreenAdaptiveUtil
-import com.tws.moments.utils.dip
+import com.tws.moments.domain.model.Tweet
 import com.tws.moments.presentation.viewmodels.MainViewModel
 import com.tws.moments.presentation.viewmodels.MainViewModelFactory
+import com.tws.moments.ui.adapters.MomentsAdapter
 import com.tws.moments.ui.views.LoadMoreListener
 import com.tws.moments.ui.views.itemdecoration.MomentDividerItemDecoration
+import com.tws.moments.utils.ScreenAdaptiveUtil
+import com.tws.moments.utils.dip
 
 private const val TAG = "MainActivity##"
 
@@ -78,13 +79,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun subscribe() {
         viewModel.userBean.observe(this, Observer {
-            adapter.userBean = it
+            adapter.user = it
         })
 
         viewModel.tweets.observe(this, Observer {
             binding.swipeRefreshLayout.isRefreshing = false
             reqPageIndex = 1
-            adapter.tweets = it.toMutableList()
+            adapter.tweets = it.toMutableList() as ArrayList<Tweet>
         })
     }
 

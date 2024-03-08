@@ -3,10 +3,10 @@ package com.tws.moments.ui.adapters
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.tws.moments.data.api.entry.TweetBean
-import com.tws.moments.data.api.entry.UserBean
 import com.tws.moments.databinding.ItemMomentHeadBinding
 import com.tws.moments.databinding.LayoutBaseTweetBinding
+import com.tws.moments.domain.model.Tweet
+import com.tws.moments.domain.model.User
 import com.tws.moments.ui.viewholders.HeaderViewHolder
 import com.tws.moments.ui.viewholders.TweetViewHolder
 
@@ -17,13 +17,13 @@ private const val TYPE_HEAD = 1000
 class MomentsAdapter() :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    var tweets: MutableList<TweetBean>? = null
+    var tweets: ArrayList<Tweet> = ArrayList()
         set(value) {
             field = value
             notifyDataSetChanged()
         }
 
-    var userBean: UserBean? = null
+    var user: User? = null
         set(value) {
             field = value
             notifyItemChanged(0)
@@ -51,7 +51,7 @@ class MomentsAdapter() :
     }
 
     override fun getItemCount(): Int {
-        return (tweets?.size ?: 0) + 1
+        return tweets.size + 1
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -62,19 +62,19 @@ class MomentsAdapter() :
     @Suppress("UNCHECKED_CAST")
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (position == 0) {
-            (holder as? HeaderViewHolder)?.bind(userBean)
+            (holder as? HeaderViewHolder)?.bind(user)
         } else {
-            (holder as? TweetViewHolder)?.bind(tweets!![tweetIndex(position)])
+            (holder as? TweetViewHolder)?.bind(tweets[tweetIndex(position)])
         }
     }
 
-    fun addMoreTweet(tweets: List<TweetBean>?) {
-        if (tweets.isNullOrEmpty() || this.tweets.isNullOrEmpty()) {
+    fun addMoreTweet(tweets: List<Tweet>) {
+        if (tweets.isEmpty() || this.tweets.isEmpty()) {
             return
         }
         val newTweetSize = tweets.size
-        val oldTweetsSize = this.tweets!!.size
-        this.tweets!!.addAll(tweets)
+        val oldTweetsSize = this.tweets.size
+        this.tweets.addAll(tweets)
         notifyItemRangeInserted(oldTweetsSize + 1, newTweetSize)
     }
 

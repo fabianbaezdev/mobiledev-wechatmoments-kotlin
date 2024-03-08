@@ -4,8 +4,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tws.moments.data.MomentRepository
-import com.tws.moments.data.api.entry.TweetBean
-import com.tws.moments.data.api.entry.UserBean
+import com.tws.moments.domain.model.Tweet
+import com.tws.moments.domain.model.User
 import kotlinx.coroutines.launch
 import kotlin.math.min
 
@@ -15,15 +15,15 @@ private const val PAGE_TWEET_COUNT = 5
 
 class MainViewModel(private val repository: MomentRepository) : ViewModel() {
 
-    val userBean: MutableLiveData<UserBean> by lazy {
-        MutableLiveData<UserBean>().also { loadUserInfo() }
+    val userBean: MutableLiveData<User> by lazy {
+        MutableLiveData<User>().also { loadUserInfo() }
     }
 
-    val tweets: MutableLiveData<List<TweetBean>> by lazy {
-        MutableLiveData<List<TweetBean>>().also { loadTweets() }
+    val tweets: MutableLiveData<List<Tweet>> by lazy {
+        MutableLiveData<List<Tweet>>().also { loadTweets() }
     }
 
-    private var allTweets: List<TweetBean>? = null
+    private var allTweets: List<Tweet> = emptyList()
 
 
     private fun loadUserInfo() {
@@ -48,10 +48,10 @@ class MainViewModel(private val repository: MomentRepository) : ViewModel() {
                 null
             }
 
-            allTweets = result
+            allTweets = result.orEmpty()
 
-            if ((allTweets?.size ?: 0) > PAGE_TWEET_COUNT) {
-                tweets.value = allTweets?.subList(0, PAGE_TWEET_COUNT)
+            if ((allTweets.size) > PAGE_TWEET_COUNT) {
+                tweets.value = allTweets.subList(0, PAGE_TWEET_COUNT)
             } else {
                 tweets.value = allTweets
             }
@@ -65,13 +65,13 @@ class MainViewModel(private val repository: MomentRepository) : ViewModel() {
     val pageCount: Int
         get() {
             return when {
-                allTweets.isNullOrEmpty() -> 0
-                allTweets!!.size % PAGE_TWEET_COUNT == 0 -> allTweets!!.size / PAGE_TWEET_COUNT
-                else -> allTweets!!.size / PAGE_TWEET_COUNT + 1
+                allTweets.isEmpty() -> 0
+                allTweets.size % PAGE_TWEET_COUNT == 0 -> allTweets.size / PAGE_TWEET_COUNT
+                else -> allTweets.size / PAGE_TWEET_COUNT + 1
             }
         }
 
-    fun loadMoreTweets(pageIndex: Int, onLoad: (List<TweetBean>?) -> Unit) {
+    fun loadMoreTweets(pageIndex: Int, onLoad: (List<Tweet>) -> Unit) {
         if (pageIndex < 0) {
             throw IllegalArgumentException("page index must greater than or equal to 0.")
         }
@@ -82,8 +82,8 @@ class MainViewModel(private val repository: MomentRepository) : ViewModel() {
 
         viewModelScope.launch {
             val startIndex = PAGE_TWEET_COUNT * pageIndex
-            val endIndex = min(allTweets!!.size, PAGE_TWEET_COUNT * (pageIndex + 1))
-            val result = allTweets!!.subList(startIndex, endIndex)
+            val endIndex = min(allTweets.size, PAGE_TWEET_COUNT * (pageIndex + 1))
+            val result = allTweets.subList(startIndex, endIndex)
             onLoad(result)
         }
     }

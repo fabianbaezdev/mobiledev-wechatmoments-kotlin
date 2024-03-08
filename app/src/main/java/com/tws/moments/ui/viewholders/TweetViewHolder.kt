@@ -5,11 +5,9 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.tws.moments.TWApplication
-import com.tws.moments.data.api.entry.CommentsBean
-import com.tws.moments.data.api.entry.ImagesBean
-import com.tws.moments.data.api.entry.SenderBean
-import com.tws.moments.data.api.entry.TweetBean
 import com.tws.moments.databinding.LayoutBaseTweetBinding
+import com.tws.moments.domain.model.Comment
+import com.tws.moments.domain.model.Tweet
 import com.tws.moments.ui.adapters.CommentsAdapter
 import com.tws.moments.ui.adapters.ImagesAdapter
 import com.tws.moments.ui.views.itemdecoration.ImagesDecoration
@@ -29,10 +27,10 @@ class TweetViewHolder(private val binding: LayoutBaseTweetBinding) :
     private lateinit var imagesAdapter: ImagesAdapter
     private lateinit var commentsAdapter: CommentsAdapter
     private var imageLoader = TWApplication.imageLoader
-    fun bind(tweet: TweetBean) {
+    fun bind(tweet: Tweet) {
         renderTextContent(tweet.content)
         renderImages(tweet.images)
-        renderSender(tweet.sender)
+        renderSender(tweet.senderAvatar, tweet.senderNick)
         renderComments(tweet.comments)
     }
 
@@ -40,8 +38,8 @@ class TweetViewHolder(private val binding: LayoutBaseTweetBinding) :
         binding.tvTweetContent.text = content
     }
 
-    private fun renderImages(imagesBean: List<ImagesBean>?) {
-        if (imagesBean == null || imagesBean.isEmpty()) {
+    private fun renderImages(imagesBean: List<String>) {
+        if (imagesBean.isEmpty()) {
             binding.simpleImageView.visibility = View.GONE
             binding.imagesRecyclerView.visibility = View.GONE
             return
@@ -55,7 +53,7 @@ class TweetViewHolder(private val binding: LayoutBaseTweetBinding) :
         if (imagesBean.size == 1) {
             binding.simpleImageView.visibility = View.VISIBLE
             binding.imagesRecyclerView.visibility = View.GONE
-            val url = imagesBean[0].url
+            val url = imagesBean[0]
             imageLoader.displayImage(
                 url, binding.simpleImageView
             )
@@ -65,27 +63,24 @@ class TweetViewHolder(private val binding: LayoutBaseTweetBinding) :
             binding.simpleImageView.visibility = View.GONE
             binding.imagesRecyclerView.visibility = View.VISIBLE
             imagesAdapter.images =
-                imagesBean.asSequence().map { it.url ?: "" }.filter { it.isNotEmpty() }.toList()
+                imagesBean.asSequence().map { it }.filter { it.isNotEmpty() }.toList()
         }
     }
 
-    private fun renderSender(sender: SenderBean?) {
-        if (sender != null) {
-            binding.tvSenderNickname.text = sender.nick
+    private fun renderSender(senderAvatar: String, senderNick: String) {
+        binding.tvSenderNickname.text = senderNick
             imageLoader.displayImage(
-                sender.avatar, binding.ivSenderAvatar
+                senderAvatar, binding.ivSenderAvatar
             )
-        }
     }
 
-    private fun renderComments(comments: List<CommentsBean>?) {
-        if (comments.isNullOrEmpty()) {
+    private fun renderComments(comments: List<Comment>) {
+        if (comments.isEmpty()) {
             binding.rvComments.visibility = View.GONE
         } else {
             binding.rvComments.visibility = View.VISIBLE
             commentsAdapter.comments = comments
         }
-
     }
 
     private fun setupCommentsView(commentsView: RecyclerView) {
