@@ -9,15 +9,15 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.tws.moments.adapters.MomentsAdapter
-import com.tws.moments.api.MomentRepository
+import com.tws.moments.ui.adapters.MomentsAdapter
+import com.tws.moments.data.MomentRepository
 import com.tws.moments.databinding.ActivityMainBinding
 import com.tws.moments.utils.ScreenAdaptiveUtil
 import com.tws.moments.utils.dip
-import com.tws.moments.viewmodels.MainViewModel
-import com.tws.moments.viewmodels.MainViewModelFactory
-import com.tws.moments.views.LoadMoreListener
-import com.tws.moments.views.itemdecoration.MomentDividerItemDecoration
+import com.tws.moments.presentation.viewmodels.MainViewModel
+import com.tws.moments.presentation.viewmodels.MainViewModelFactory
+import com.tws.moments.ui.views.LoadMoreListener
+import com.tws.moments.ui.views.itemdecoration.MomentDividerItemDecoration
 
 private const val TAG = "MainActivity##"
 
