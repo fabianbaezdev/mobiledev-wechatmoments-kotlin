@@ -1,29 +1,37 @@
 package com.tws.moments
 
-import android.graphics.Color
-import android.os.Build
 import android.os.Bundle
-import android.util.Log
-import android.view.View
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.tws.moments.data.MomentRepository
-import com.tws.moments.databinding.ActivityMainBinding
-import com.tws.moments.domain.model.Tweet
-import com.tws.moments.presentation.viewmodels.MainViewModel
-import com.tws.moments.presentation.viewmodels.MainViewModelFactory
-import com.tws.moments.ui.adapters.MomentsAdapter
-import com.tws.moments.ui.views.LoadMoreListener
-import com.tws.moments.ui.views.itemdecoration.MomentDividerItemDecoration
-import com.tws.moments.utils.ScreenAdaptiveUtil
-import com.tws.moments.utils.dip
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.ui.Modifier
+import com.tws.moments.ui.navigation.AppNavigation
+import com.tws.moments.ui.theme.WeChatTheme
 
 private const val TAG = "MainActivity##"
 
-class MainActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityMainBinding
+class MainActivity : ComponentActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
+        super.onCreate(savedInstanceState)
+        setContent {
+            WeChatTheme {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    AppNavigation()
+                }
+            }
+        }
+    }
+
+
+    /*   private lateinit var binding: ActivityMainBinding
 
     private val viewModel: MainViewModel by viewModels {
         val repository = MomentRepository()
@@ -45,6 +53,7 @@ class MainActivity : AppCompatActivity() {
         setupRecyclerView()
         subscribe()
     }
+
 
     private fun setupRecyclerView() {
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
@@ -95,5 +104,5 @@ class MainActivity : AppCompatActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             window.statusBarColor = Color.TRANSPARENT
         }
-    }
+    } */
 }

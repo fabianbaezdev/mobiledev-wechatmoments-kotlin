@@ -16,6 +16,10 @@ class MomentRepository : Repository {
     }
 
     override suspend fun fetchTweets(): List<Tweet> {
-        return with(tweetMapper) { reqApi.tweets("jsmith").remoteToDomain() }
+        return with(tweetMapper) {
+            reqApi.tweets("jsmith")
+                .filter { it.sender != null && (it.content != null || !it.images.isNullOrEmpty()) }
+                .remoteToDomain()
+        }
     }
 }

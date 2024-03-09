@@ -6,12 +6,15 @@ import androidx.lifecycle.viewModelScope
 import com.tws.moments.data.MomentRepository
 import com.tws.moments.domain.model.Tweet
 import com.tws.moments.domain.model.User
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.math.min
 
 private const val TAG = "MainViewModel##"
 
-private const val PAGE_TWEET_COUNT = 5
+private const val PAGE_TWEET_COUNT = 15
 
 class MainViewModel(private val repository: MomentRepository) : ViewModel() {
 
@@ -22,6 +25,9 @@ class MainViewModel(private val repository: MomentRepository) : ViewModel() {
     val tweets: MutableLiveData<List<Tweet>> by lazy {
         MutableLiveData<List<Tweet>>().also { loadTweets() }
     }
+
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshing = _isRefreshing.asStateFlow()
 
     private var allTweets: List<Tweet> = emptyList()
 
@@ -55,10 +61,12 @@ class MainViewModel(private val repository: MomentRepository) : ViewModel() {
             } else {
                 tweets.value = allTweets
             }
+            _isRefreshing.update { false }
         }
     }
 
     fun refreshTweets() {
+        _isRefreshing.update { true }
         loadTweets()
     }
 
