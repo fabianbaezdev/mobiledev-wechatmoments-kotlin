@@ -1,7 +1,8 @@
 package com.tws.moments.presentation.viewmodels
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.tws.moments.data.MomentRepository
+import com.tws.moments.domain.GetTweetsUseCase
+import com.tws.moments.domain.GetUserUseCase
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -39,12 +40,13 @@ class MainViewModelUnitTest {
 
     @Test
     fun test_fetch_tweets() {
-        val momentRepository = mockk<MomentRepository>()
+        val getTweetsUseCase = mockk<GetTweetsUseCase>()
+        val getUserUseCase = mockk<GetUserUseCase>()
         coEvery {
-            momentRepository.fetchTweets()
+            getTweetsUseCase.execute()
         } returns listOf()
 
-        val mainViewModel = MainViewModel(momentRepository)
+        val mainViewModel = MainViewModel(getUserUseCase, getTweetsUseCase)
         mainViewModel.refreshTweets()
 
         Assert.assertEquals(0, mainViewModel.tweets.value?.size?:0)

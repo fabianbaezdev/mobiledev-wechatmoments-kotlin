@@ -3,20 +3,27 @@ package com.tws.moments.presentation.viewmodels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.tws.moments.data.MomentRepository
+import com.tws.moments.domain.GetTweetsUseCase
+import com.tws.moments.domain.GetUserUseCase
 import com.tws.moments.domain.model.Tweet
 import com.tws.moments.domain.model.User
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 import kotlin.math.min
 
 private const val TAG = "MainViewModel##"
 
 private const val PAGE_TWEET_COUNT = 15
 
-class MainViewModel(private val repository: MomentRepository) : ViewModel() {
+@HiltViewModel
+class MainViewModel @Inject constructor(
+    private val getUserUseCase: GetUserUseCase,
+    private val getTweetsUseCase: GetTweetsUseCase
+) : ViewModel() {
 
     val userBean: MutableLiveData<User> by lazy {
         MutableLiveData<User>().also { loadUserInfo() }
@@ -35,7 +42,7 @@ class MainViewModel(private val repository: MomentRepository) : ViewModel() {
     private fun loadUserInfo() {
         viewModelScope.launch {
             val result = try {
-                repository.fetchUser()
+                getUserUseCase.execute()
             } catch (e: Exception) {
                 e.printStackTrace()
                 null
@@ -48,7 +55,7 @@ class MainViewModel(private val repository: MomentRepository) : ViewModel() {
     private fun loadTweets() {
         viewModelScope.launch {
             val result = try {
-                repository.fetchTweets()
+                getTweetsUseCase.execute()
             } catch (e: Exception) {
                 e.printStackTrace()
                 null

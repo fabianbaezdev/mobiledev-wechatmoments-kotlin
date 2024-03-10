@@ -10,7 +10,8 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class TweetMapperTest {
-    private val mapper = TweetMapper()
+    private val commentMapper = CommentMapper()
+    private val mapper = TweetMapper(commentMapper)
 
     @Test
     fun `given TweetBean, when remoteToDomain, then Tweet`() {

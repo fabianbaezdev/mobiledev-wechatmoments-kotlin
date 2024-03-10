@@ -26,10 +26,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -40,21 +40,27 @@ import androidx.compose.ui.unit.times
 import androidx.constraintlayout.compose.ConstraintLayout
 import coil.compose.AsyncImage
 import com.tws.moments.domain.model.Tweet
+import com.tws.moments.domain.model.User
 import com.tws.moments.presentation.viewmodels.MainViewModel
 import com.tws.moments.ui.theme.colorTweetContent
 
 @Composable
 fun HomeScreen(viewModel: MainViewModel) {
-    Column(Modifier.fillMaxSize()) {
-        Header(viewModel)
-        TweetFeed(viewModel)
+    val refreshing = viewModel.isRefreshing.collectAsState().value
+    val tweets = viewModel.tweets.observeAsState().value
+
+    Column(
+        Modifier
+            .fillMaxSize()
+            .testTag("HomeScreenColumn")
+    ) {
+        Header(viewModel.userBean.observeAsState().value)
+        TweetFeed(tweets, refreshing, viewModel::refreshTweets)
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun Header(viewModel: MainViewModel) {
-    val user = viewModel.userBean.observeAsState().value
+fun Header(user: User?) {
     ConstraintLayout {
         val (userProfile, userAvatar, userNick) = createRefs()
 
@@ -88,7 +94,8 @@ fun Header(viewModel: MainViewModel) {
                 .constrainAs(userNick) {
                     bottom.linkTo(userProfile.bottom, margin = 5.dp)
                     end.linkTo(userAvatar.start, margin = 10.dp)
-                },
+                }
+                .testTag("HeaderNickText"),
             fontSize = 18.sp,
             color = Color.White
         )
@@ -97,13 +104,19 @@ fun Header(viewModel: MainViewModel) {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun TweetFeed(viewModel: MainViewModel) {
-    val refreshing = viewModel.isRefreshing.collectAsState().value
-    val tweets = viewModel.tweets.observeAsState().value
-    val state = rememberPullRefreshState(refreshing, viewModel::refreshTweets)
+fun TweetFeed(tweets: List<Tweet>?, refreshing: Boolean, refreshTweets: () -> Unit) {
+    val state = rememberPullRefreshState(refreshing, refreshTweets)
 
-    Box(Modifier.pullRefresh(state)) {
-        LazyColumn(Modifier.fillMaxSize()) {
+    Box(
+        Modifier
+            .pullRefresh(state)
+            .testTag("TweetFeedContainer")
+    ) {
+        LazyColumn(
+            Modifier
+                .fillMaxSize()
+                .testTag("TweetFeedLazyColumn")
+        ) {
             if (!refreshing)
                 this.itemsIndexed(tweets.orEmpty()) { index, tweet ->
                     TweetCard(tweet)
@@ -131,7 +144,8 @@ fun TweetCard(tweet: Tweet) {
             Text(
                 text = tweet.senderNick,
                 modifier = Modifier
-                    .padding(top = 6.dp, start = 6.dp),
+                    .padding(top = 6.dp, start = 6.dp)
+                    .testTag("TweetCardSenderNick"),
                 textAlign = TextAlign.Left,
                 fontWeight = FontWeight.Bold,
                 maxLines = 1
@@ -141,7 +155,8 @@ fun TweetCard(tweet: Tweet) {
                     text = tweet.content,
                     color = colorTweetContent,
                     modifier = Modifier
-                        .padding(6.dp, 0.dp),
+                        .padding(6.dp, 0.dp)
+                        .testTag("TweetCardContent"),
                     textAlign = TextAlign.Left,
                     fontSize = 14.sp,
                     maxLines = 5,
@@ -152,7 +167,7 @@ fun TweetCard(tweet: Tweet) {
                 AsyncImage(
                     model = tweet.images[0],
                     contentScale = ContentScale.Crop,
-                    contentDescription = "Sender Avatar",
+                    contentDescription = "Image Alone",
                     modifier = Modifier
                         .width(100.dp)
                         .height(150.dp)
@@ -163,14 +178,15 @@ fun TweetCard(tweet: Tweet) {
                 LazyVerticalGrid(
                     modifier = Modifier
                         .height(maxH)
-                        .width(200.dp),
+                        .width(200.dp)
+                        .testTag("TweetCardImageGrid"),
                     columns = GridCells.Fixed(2)
                 ) {
                     items(tweet.images) { img ->
                         AsyncImage(
                             model = img,
                             contentScale = ContentScale.Crop,
-                            contentDescription = "Sender Avatar",
+                            contentDescription = "Image Group",
                             modifier = Modifier
                                 .size(94.dp)
                         )

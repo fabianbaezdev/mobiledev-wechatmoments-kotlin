@@ -2,8 +2,9 @@ package com.tws.moments.data.mapper
 
 import com.tws.moments.data.api.entry.CommentsBean
 import com.tws.moments.domain.model.Comment
+import javax.inject.Inject
 
-class CommentMapper {
+class CommentMapper @Inject constructor() {
 
     fun List<CommentsBean>?.remoteToDomain() = this?.map { it.remoteToDomain() }
 

@@ -10,9 +10,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.tws.moments.ui.navigation.AppNavigation
 import com.tws.moments.ui.theme.WeChatTheme
+import dagger.hilt.android.AndroidEntryPoint
 
 private const val TAG = "MainActivity##"
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
