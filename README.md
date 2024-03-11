@@ -1,3 +1,33 @@
+## About this project
+
+This is a interview exercise. The project is a Android app similar to Twitter, that comes without
+Clean Architecture, with a lot of bugs, and with old libraries. So the objective for me is update
+this project.
+
+## Changes (in order)
+
+To update and fix this code I made these changes in order
+
+1. Reorder the classes and add the Clean Architecture layer: data, domain, presentation and ui.
+2. Fixed the bugs, missed variables and missed functions, to make the app works.
+3. Create a model for domain layers, mappers and Unit Tests
+4. Change all the ui layer for Jetpack Compose, and I removed the old classes and XMLs
+5. Added UI Tests for Jetpack Compose
+6. Added Hilt for DI, UseCases in domain layers and adding more Unit Tests.
+
+### Future changes
+
+With the current changes the project is almost all updated, but when I have time in the future I
+will make the next changes:
+
+1. Adding Room for persist data in a local database.
+2. Improving the original design, and add animations with Jetpack Compose.
+3. Adding more features like adding a Tweet or adding a comment, all working with the local
+   database.
+
+Below this line is the original exercise
+---
+
 ### Requirements
 1. Android Studio Bumblebee (2021.1.1) - via [Android Developers](https://developer.android.com/studio)
 2. Android SDK 31 and BuildTools 30.0.3 - via [Android SDK Manager](https://developer.android.com/studio/intro/update#sdk-manager)
